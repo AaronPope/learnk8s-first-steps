@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lk8s-challenge-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: lk8s-challenge-2
+  template:
+    metadata:
+      labels:
+        name: lk8s-challenge-2
+    spec:
+      serviceAccountName: learnk8s-challenge
+      containers:
+        - name: lk8s-challenge-2
+          image: learnk8s/fundamentals:inspect
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lk8s-challenge-2
+spec:
+  selector:
+    name: lk8s-challenge-2
+  ports:
+    - port: 8080
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lk8s-challenge-2
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /challenge-2
+        pathType: Prefix
+        backend:
+          service:
+            name: lk8s-challenge-2
+            port:
+              number: 8080
